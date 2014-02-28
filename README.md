@@ -16,16 +16,17 @@ It has 2 core feature :
 
     * DOM
 
-      All data has be loaded fully in memory.     
-      We can random access elemets and can validate the xml schema.
+      * Pros : We can random access elemets and validate the xml schema.      
+      * Cons : All data has to be fully loaded into memory. IO Blocking
 
     * SAX (Push Parser) 
 
-      This is an sequantial , event driven strategy and only the small parts of data has to be loaded in memory.
-
+      * Pros : This is an sequantial , event driven strategy and only the small parts of data has to be loaded in memory.
+      * Cons : We cant validate xml schema.
+      
   Eventhough our program requirements perfectly match with DOM strategy i choosed SAX here.
  
-  First we dont know the file size. If users wants to import gigabytes of data we cant say them no. We need to accept and adept gracefully. Second , dom strategy  is an io blocking way. We need to wait until it's fully loaded. It doesnt scale well. By using SAX we can distribute and process them concurrently.
+  First we dont know the file size. If user wants to import gigabytes of data we cant say them no. We need to accept and adept gracefully. Second , dom strategy  is an io blocking way. We need to wait until it's fully loaded. It doesnt scale well. By using SAX we can distribute and process them concurrently.
 
 **Sample import file**
 ```xml
