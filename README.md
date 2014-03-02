@@ -11,6 +11,10 @@ It has 2 core feature :
   Search ignores case sensitivity. Searching Foo | foo | fOf al returns same result.
 
 * Bulk import from xml file
+  
+  For given file path we parse xml file and write collected contacts to the mongodb.
+
+##  Bulk Importing
 
   First of all we have to decide a xml parsing strategy. There are two widely known choice :
 
@@ -27,6 +31,10 @@ It has 2 core feature :
   Eventhough our program requirements perfectly match with DOM strategy i choosed SAX here.
  
   First we dont know the file size. If user wants to import gigabytes of data we cant say them no. We need to accept and adept gracefully. Second , dom strategy  is an io blocking way. We need to wait until it's fully loaded. It doesnt scale well. By using SAX we can distribute and process them concurrently.
+
+  For smaller files merging contacts in memory and writing to the database is more efficient. At the start of parsing if the file size is smaller than a threshold value we collect contacts and merge them in memory. Then we save them concurrently.
+
+  If its not small enough to manage in memory we skip this process and save them concurrently.You can set this threshold value by giving -size arguments to program. By default its set to 20 MB.
 
 **Sample import file**
 ```xml
@@ -47,9 +55,15 @@ It has 2 core feature :
 
 
 ## Getting started
-Inside the base folder (where the pom.xml file is located) run the following commands 
+Inside the base folder (where the pom.xml file is located) run the following commands :
     
     mvn install
     mvn exec:java
 
-You can change mongodb configuration by editing mongodb.properties file.
+You can also set file size threshold value by giving -size argument :
+
+    mvn exec:java -Dexec.args="-size 1048576"
+
+## MongoDb Configuration
+
+You can change mongodb configuration by editing mongodb.properties file. By default program tries to connect localhost : 27017. If you have more than one node you can define in configuration.
