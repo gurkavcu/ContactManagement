@@ -12,11 +12,14 @@ import java.util.Scanner;
 
 public class CommandLineOptions {
 
-    @Option(name="-s",usage="find the contacts whose name's matches this")
+    @Option(name="-f",usage="find the contact whose name's matches this")
     public String userName;
 
     @Option(name="-i",usage="bulk insert this file")
     public File bulkFile;
+
+    @Option(name="-size",usage="if file size bigger than this don't merge contacts")
+    public static long size = 1048576 * 20;
 
     private static final Logger LOG = LogManager.getLogger(CommandLineOptions.class.getName());
 
@@ -80,7 +83,7 @@ public class CommandLineOptions {
             ContactParser.ParseResult result = ContactParser.parseContact(new File(path));
             System.out.println(String.format("  %d contact imported to mongodb - Took %d milliseconds",result.count,result.time));
         } catch (FileNotFoundException e) {
-            System.out.println("\n1  File not found");
+            System.out.println("\n  File not found");
         }
     }
 

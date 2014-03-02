@@ -5,8 +5,11 @@ import com.vngrs.model.Contact;
 import java.io.File;
 import java.io.IOException;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.concurrent.BlockingQueue;
+
+import com.vngrs.util.CommandLineOptions;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.xml.sax.Attributes;
@@ -23,19 +26,26 @@ public class ContactProducer implements Runnable {
 
     private final File xml;
 
+    private boolean mergeFlag = true;
+
     // This queue will consume by ContactConsumer threads
     private final BlockingQueue<Contact> queue;
+
+    private HashMap<String,Contact> contactTable = new HashMap<String, Contact>();
 
     private static final Logger LOG = LogManager.getLogger(ContactProducer.class.getName());
 
     public ContactProducer(BlockingQueue<Contact> queue, File xml) {
         this.queue = queue;
         this.xml = xml;
+        if(xml.length() > CommandLineOptions.size) {
+            mergeFlag = false;
+        }
     }
 
     /**
      *  Inner class that responsible for xml parsing.
-     *  Extracts the contact information and puts it on a BlockingQueue.
+     *  Extracts the contact information and puts it on a BlockingQueue or contactTable depends on mergeFlag
      */
     public class ContactHandler extends DefaultHandler {
 
@@ -64,7 +74,11 @@ public class ContactProducer implements Runnable {
         public void endElement(String uri, String localName, String qName) throws SAXException {
             if (qName.equalsIgnoreCase("contact")) {
                 try {
-                    queue.put(contact);
+                    if(mergeFlag) {
+                        mergeContact(contact);
+                    } else {
+                        queue.put(contact);
+                    }
                 } catch (InterruptedException e) {
                     LOG.error("  Contact producer thread is interrupted while putting on queue : {} : {} ",e.toString(), contact.toString());
                 }
@@ -80,11 +94,27 @@ public class ContactProducer implements Runnable {
         @Override
         public void endDocument() throws SAXException {
             try {
+                if(mergeFlag) {
+                    for(Contact c : contactTable.values()){
+                        queue.put(c);
+                    }
+                }
                 /* Putting a terminator contact sends all consumer threads a finishing signal */
                 queue.put(Contact.getTerminator());
             } catch (InterruptedException e) {
                 LOG.error("Thread exception : {}", e.toString());
             }
+        }
+
+        public void mergeContact(Contact contact) {
+            Contact existingContact = contactTable.get(contact.getFullName());
+            if(existingContact != null) {
+                existingContact.addPhones(contact.getPhones());
+            }
+            else {
+                existingContact = contact;
+            }
+            contactTable.put(contact.getFullName(),existingContact);
         }
     }
 

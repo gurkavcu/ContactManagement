@@ -70,6 +70,10 @@ public class Contact {
         this.phones = phones;
     }
 
+    public void addPhones(Set<String> phones) {
+        this.phones.addAll(phones);
+    }
+
     public boolean isEof() {
         return eof;
     }
@@ -78,6 +82,9 @@ public class Contact {
         this.eof = eof;
     }
 
+    public String getFullName() {
+        return name + " " + lastName;
+    }
     /**
      * Creates new contact if there is no matching name + lastname record.
      * If there is an existing record update only phone numbers.
@@ -90,10 +97,8 @@ public class Contact {
         Query<Contact> contactQuery = createContactQuery(this);
         UpdateOperations<Contact> updatePhones = ds.createUpdateOperations(Contact.class);
 
-        for (String phone : phones) {
-            // Third argument false indicates that this is an $addToSet operation
-            updatePhones.add("phones",phone,false);
-        }
+        // Third argument false indicates that this is an $addToSet operation
+        updatePhones.addAll("phones", new ArrayList<Object>(phones),false);
 
         return !ds.update(contactQuery,updatePhones,true).getHadError();
     }
