@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<contacts>
+    <contact>
+        <name>Bob</name>
+        <lastName>Sponge</lastName>
+        <phone>+90 300 2222222</phone>
+    </contact>
+    <contact>
+        <name>Bob</name>
+        <lastName>Sponge</lastName>
+        <phone>+90 300 3333333</phone>
+    </contact>
+    <contact>
+        <name>Patrick</name>
+        <lastName>Star</lastName>
+        <phone>+90 400 1111111</phone>
+    </contact>
+    <contact>
+        <name>Bob</name>
+        <lastName>Sponge</lastName>
+        <phone>+90 300 2222222</phone>
+    </contact>
+    <contact>
+        <name>Bob</name>
+        <lastName>Sponge</lastName>
+        <phone>+90 300 3333333</phone>
+    </contact>
+</contacts>
