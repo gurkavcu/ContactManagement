@@ -22,7 +22,7 @@ public class MongoDB {
 
     private static final Logger LOG = LogManager.getLogger(MongoDB.class.getName());
 
-    private static final MongoDB INSTANCE = new MongoDB();
+    private static MongoDB INSTANCE;
 
     public static final String DB_NAME = "contact_management";
 
@@ -49,12 +49,27 @@ public class MongoDB {
         }
     }
 
+    private MongoDB(Morphia morphia, Datastore datastore) {
+        this.morphia = morphia;
+        this.datastore = datastore;
+    }
+
     /**
      * Because the creation of MongoDB object costly we are using singleton pattern here.
      *
      * @return single instance of MongoDB
      */
     public static MongoDB instance() {
+        if(INSTANCE == null) {
+            INSTANCE = new MongoDB();
+        }
+        return INSTANCE;
+    }
+
+    public static MongoDB setInstance(Morphia morphia, Datastore datastore) {
+        if(INSTANCE == null) {
+            INSTANCE = new MongoDB(morphia,datastore);
+        }
         return INSTANCE;
     }
 

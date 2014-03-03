@@ -6,6 +6,7 @@ import org.apache.logging.log4j.Logger;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Consume contacts
@@ -38,8 +39,10 @@ public class ContactConsumer implements Callable<Long> {
         totalConsumed = 0l;
         try {
             while(countDownLatch.getCount()>0){
-                // Blocks the thread until we get a contact
-                contact = queue.take();
+                // Try to get a contact from queue
+                contact = queue.poll(100, TimeUnit.MILLISECONDS);
+                if(contact == null)
+                   continue;
                 if(contact.isEof()) {
                     // This breaks all consumer thread's blocking cycle
                     countDownLatch.countDown();
