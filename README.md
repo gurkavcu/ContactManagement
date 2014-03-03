@@ -67,3 +67,7 @@ You can also set file size threshold value by giving -size argument :
 ## MongoDb Configuration
 
 You can change mongodb configuration by editing mongodb.properties file. By default program tries to connect localhost : 27017. If you have more than one node you can define in configuration.
+
+## Testing
+
+Used embedded MongoDb instance for unit testing. When you run mvn install first time it needs to download MongoDb. This may take a while depending on your connection speed.
