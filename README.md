@@ -1,5 +1,5 @@
 # Contact Management Application
-This is a simple commnadline application for managing contacts.
+This is a simple commandline application for managing contacts.
 
 ## Features
 
